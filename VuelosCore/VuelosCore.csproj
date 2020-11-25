@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <Reference Include="AutheticationLibrary">
-      <HintPath>..\..\..\..\Downloads\AutheticationLibrary\AutheticationLibrary.dll</HintPath>
+      <HintPath>AutheticationLibrary\AutheticationLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
 
