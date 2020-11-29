@@ -46,7 +46,7 @@ namespace VuelosCore.Controllers
                             CiudadUbicacion = item.CiudadUbicacin,
                             Iata = item.Lata,
                             Id = item.Id,
-                            Concatenado = $"[{ item.Lata }]{item.CiudadUbicacin}]"
+                            Concatenado = $"{item.CiudadUbicacin}[{item.Lata}]"
                         });
                     }
                 }
@@ -71,7 +71,7 @@ namespace VuelosCore.Controllers
                 if (!DateTime.TryParseExact(model.FechaInicio, "dd'/'MM'/'yyyy",
                                           CultureInfo.InvariantCulture,
                                           DateTimeStyles.None,
-                                          out  dateTimeInicio))
+                                          out dateTimeInicio))
                 {
                     return BadRequest("Formato de fecha invalido, formato permitido dd/MM/aaaa");
                 }
@@ -82,9 +82,19 @@ namespace VuelosCore.Controllers
                 {
                     return BadRequest("Formato de fecha invalido, formato permitido dd/MM/aaaa");
                 }
+                var origen = _db.Aeropuertos.FirstOrDefault(c => c.CiudadUbicacin == model.Origen);
+                if (origen == null)
+                {
+                    return NotFound("No se encontro la ciudad de origen");
+                }
+                var destino = _db.Aeropuertos.FirstOrDefault(c => c.CiudadUbicacin == model.Destino);
+                if (origen == null)
+                {
+                    return NotFound("No se encontro la ciudad de destino");
+                }
                 ParametrosDTO parametros = new ParametrosDTO();
                 Consulta consultaVuelos = new Consulta
-                {
+                {                    
                     Class = "Bar",
                     Destination = model.Destino,
                     EndDate = model.FechaFinal,
@@ -92,12 +102,15 @@ namespace VuelosCore.Controllers
                     QuantityTravellers = model.CantidadPasajeros.ToString(),
                     StartDate = model.FechaInicio
                 };
-                parametros.parameters.vuelos.consulta = consultaVuelos;
+                parametros.parameters.vuelos.consulta = consultaVuelos;              
                 ResponseConsultaVuelos response = new ResponseConsultaVuelos();
                 List<ResponseBase> vuelos = new List<ResponseBase>
                 {
                     new ResponseBase
                     {
+                        DestinationAirport=destino.Lata,
+                        OriginAirport=destino.Lata,
+                        Supplier="Avianca",
                         Origin = model.Origen,
                         Destination = model.Destino,
                         Stardate = DateTime.Now.AddDays(1),
@@ -107,6 +120,9 @@ namespace VuelosCore.Controllers
                     },
                     new ResponseBase
                     {
+                        DestinationAirport=destino.Lata,
+                        OriginAirport=destino.Lata,
+                        Supplier="Avianca",
                         Origin = model.Origen,
                         Destination = model.Destino,
                         Stardate = DateTime.Now.AddDays(1),
@@ -116,6 +132,9 @@ namespace VuelosCore.Controllers
                     },
                     new ResponseBase
                     {
+                        DestinationAirport=destino.Lata,
+                        OriginAirport=destino.Lata,
+                        Supplier="Avianca",
                         Origin = model.Origen,
                         Destination = model.Destino,
                         Stardate = DateTime.Now.AddDays(3),
@@ -125,6 +144,9 @@ namespace VuelosCore.Controllers
                     },
                     new ResponseBase
                     {
+                        DestinationAirport=destino.Lata,
+                        OriginAirport=destino.Lata,
+                        Supplier="Avianca",
                         Origin = model.Origen,
                         Destination = model.Destino,
                         Stardate = DateTime.Now.AddDays(5),
