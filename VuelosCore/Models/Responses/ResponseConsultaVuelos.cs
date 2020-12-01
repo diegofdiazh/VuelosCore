@@ -7,13 +7,13 @@ namespace VuelosCore.Models.Responses
 {
     public class ResponseConsultaVuelos
     {
-        public List<ResponseBase> vuelos { get; set; }
+        public List<ResponseBaseVuelos> vuelos { get; set; }
         public ResponseConsultaVuelos()
         {
-            vuelos = new List<ResponseBase>();
+            vuelos = new List<ResponseBaseVuelos>();
         }
     }
-    public partial class ResponseBase
+    public partial class ResponseBaseVuelos
     {
         public string Supplier { get; set; }
         public string OriginAirport { get; set; }
@@ -22,7 +22,7 @@ namespace VuelosCore.Models.Responses
         public string Destination { get; set; }
         public DateTime Stardate { get; set; }
         public DateTime EndDate { get; set; }
-        public long Price { get; set; }
+        public string Price { get; set; }
         public string FligthCode { get; set; }
       
     }

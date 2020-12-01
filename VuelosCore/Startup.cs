@@ -11,6 +11,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using VuelosCore.Data;
+using Confluent.Kafka;
+using VuelosCore.Services;
+using Microsoft.Extensions.Logging;
+using VuelosCore.Interfaces;
+using VuelosCore.Logging;
 
 namespace VuelosCore
 {
@@ -18,32 +23,48 @@ namespace VuelosCore
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            Configuration = configuration;          
         }
-
         public IConfiguration Configuration { get; }
+
+
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
+           services.AddDbContext<ApplicationDbContext>(options =>
              options.UseSqlServer(Configuration.GetConnectionString("Development")));
-
+            services.AddCors(o => o.AddPolicy("AllowAll", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
+            services.AddSingleton(typeof(IAppLogger<>), typeof(LoggerAdapter<>));
             services.AddControllers();
+            var producerConfig = new ProducerConfig(); 
+            var consumerConfig = new ConsumerConfig();
+            Configuration.Bind("Producer", producerConfig);
+            Configuration.Bind("Consumer", consumerConfig);
+            
+            services.AddSingleton<ProducerConfig>(producerConfig);
+            services.AddSingleton<ConsumerConfig>(consumerConfig);
+            services.AddHostedService<ConsumerService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseRouting();
+            app.UseCors("AllowAll");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
-
+          
+            app.UseHttpsRedirection();            
+         
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

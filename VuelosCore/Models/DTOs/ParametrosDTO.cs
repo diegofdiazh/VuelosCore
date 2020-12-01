@@ -141,30 +141,34 @@ namespace VuelosCore.Models.DTOs
 
     public class ParametrosDTO
     {
-        public Parameters parameters { get; set; }
+        public string Tipo_proveedor { get; set; }
+        public string Tipo_proceso { get; set; }
+        public Parameters Parametros { get; set; }
+        public string processType { get; set; }
+        public string Uuid { get; set; }
         public ParametrosDTO()
         {
-            parameters = new Parameters();
-            parameters.eventos = new Eventos();
-            parameters.hotel = new Hotel();
-            parameters.transporteTerrestre = new TransporteTerrestre();
-            parameters.vuelos = new Vuelos();
-            parameters.eventos = new Eventos
+            Parametros = new Parameters();
+            Parametros.eventos = new Eventos();
+            Parametros.hotel = new Hotel();
+            Parametros.transporteTerrestre = new TransporteTerrestre();
+            Parametros.vuelos = new Vuelos();
+            Parametros.eventos = new Eventos
             {
                 consulta = null,
                 reserva = null
             };
-            parameters.hotel = new Hotel
+            Parametros.hotel = new Hotel
             {
                 consulta = null,
                 reserva = null
             };
-            parameters.transporteTerrestre = new TransporteTerrestre
+            Parametros.transporteTerrestre = new TransporteTerrestre
             {
                 consulta = null,
                 reserva = null
             };
-            parameters.vuelos = new Vuelos
+            Parametros.vuelos = new Vuelos
             {
                 consulta = null,
                 reserva = null
@@ -226,15 +230,14 @@ namespace VuelosCore.Models.DTOs
                 LastName = "",
                 Name = ""
             };
-            parameters.hotel.consulta = consulta2;
-            parameters.hotel.reserva = reserva2;
-            parameters.transporteTerrestre.consulta = consulta3;
-            parameters.transporteTerrestre.reserva = reserva3;
-            parameters.vuelos.consulta = consulta;
-            parameters.vuelos.reserva = reserva;
-            parameters.eventos.consulta = consulta4;
-            parameters.eventos.reserva = reserva4;
-
+            Parametros.hotel.consulta = consulta2;
+            Parametros.hotel.reserva = reserva2;
+            Parametros.transporteTerrestre.consulta = consulta3;
+            Parametros.transporteTerrestre.reserva = reserva3;
+            Parametros.vuelos.consulta = consulta;
+            Parametros.vuelos.reserva = reserva;
+            Parametros.eventos.consulta = consulta4;
+            Parametros.eventos.reserva = reserva4;
         }
 
     }

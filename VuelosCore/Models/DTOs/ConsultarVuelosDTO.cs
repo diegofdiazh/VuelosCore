@@ -9,6 +9,8 @@ namespace VuelosCore.Models.DTOs
     public class ConsultarVuelosDTO
     {
         [Required]
+        public string Uuid { get; set; }
+        [Required]
         [DataType(DataType.Date)]
         public string FechaInicio { get; set; }
         [Required]

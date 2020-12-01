@@ -9,6 +9,8 @@ namespace VuelosCore.Models.DTOs
     public class ReservaDTO
     {
         [Required]
+        public string Uuid { get; set; }
+        [Required]
         public string CodigoVuelo { get; set; }
         [Required]
         public string Nombre { get; set; }
