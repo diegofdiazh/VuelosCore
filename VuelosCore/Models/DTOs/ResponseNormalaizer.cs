@@ -26,6 +26,18 @@ namespace VuelosCore.Models.DTOs
         public string providerType { get; set; }
         public List<ResponseNormalaizer> providersResponse { get; set; }
     }
+    public class Root1
+    {
+        public string uuid { get; set; }
+        public string processType { get; set; }
+        public string providerType { get; set; }
+        public List<ResponseNormalaizer1> providersResponse { get; set; }
+    }
+    public class ResponseNormalaizer1
+    {
+        public string providerName { get; set; }
+        public bool status { get; set; }      
+    }
     public class RequestCache
     {
         public string request { get; set; }

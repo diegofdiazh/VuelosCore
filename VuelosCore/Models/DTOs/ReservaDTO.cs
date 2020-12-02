@@ -11,6 +11,8 @@ namespace VuelosCore.Models.DTOs
         [Required]
         public string Uuid { get; set; }
         [Required]
+        public string NombreProveedor { get; set; }
+        [Required]
         public string CodigoVuelo { get; set; }
         [Required]
         public string Nombre { get; set; }

@@ -51,18 +51,20 @@ namespace VuelosCore.Services
                         var jitem = jResults.Children<JProperty>().FirstOrDefault(x => x.Name == "providerType");
                         if (jitem.Value.ToString() == "FLIGHTS")
                         {
-                            /*var jitemType = jResults.Children<JProperty>().FirstOrDefault(x => x.Name == "processType");
+                            var jitemType = jResults.Children<JProperty>().FirstOrDefault(x => x.Name == "processType");
                             if (jitemType.Value.ToString() == "CATALOG")
                             {
-
+                                var vuelos = JsonConvert.DeserializeObject<Root>(cr.Message.Value);
+                                ServidorCache servidorCache = new ServidorCache(_loggercache);
+                                servidorCache.setCache(cr.Message.Value, vuelos.uuid + "_" + vuelos.providerType + "_" + vuelos.processType);
                             }
-                            else if ()
+                            else if (jitemType.Value.ToString() == "RESERVE")
                             {
+                                var vuelos = JsonConvert.DeserializeObject<Root1>(cr.Message.Value);
+                                ServidorCache servidorCache = new ServidorCache(_loggercache);
+                                servidorCache.setCache(cr.Message.Value, vuelos.uuid + "_" + vuelos.providerType + "_" + vuelos.processType);
+                            }
 
-                            }*/
-                            var vuelos = JsonConvert.DeserializeObject<Root>(cr.Message.Value);
-                            ServidorCache servidorCache = new ServidorCache(_loggercache);
-                            servidorCache.setCache(cr.Message.Value, vuelos.uuid + "_" + vuelos.providerType + "_" + vuelos.processType);
                         }
                     }
                 }

@@ -127,7 +127,7 @@ namespace VuelosCore.Controllers
                     });
                     producer.Flush(TimeSpan.FromSeconds(10));
                     return Ok();
-                }                
+                }
             }
             catch (Exception ex)
             {
@@ -158,8 +158,9 @@ namespace VuelosCore.Controllers
                 {
                     return Unauthorized();
                 }
-                ParametrosDTO parametros = new ParametrosDTO();
+                ParametrosReservaDTO parametros = new ParametrosReservaDTO();
                 parametros.processType = "CATALOG";
+                parametros.Nombre_proveedor = model.NombreProveedor;
                 parametros.Uuid = model.Uuid;
                 parametros.Tipo_proveedor = "FLIGHTS";
                 parametros.Tipo_proceso = "catalogue";
@@ -179,7 +180,7 @@ namespace VuelosCore.Controllers
                     });
                     producer.Flush(TimeSpan.FromSeconds(10));
                     return Ok();
-                }                
+                }
             }
             catch (Exception ex)
             {
@@ -206,7 +207,7 @@ namespace VuelosCore.Controllers
                     var vuelos = servidorCache.getCache(uuid + "_FLIGHTS" + "_CATALOG");
 
                     if (vuelos != null)
-                    {                        
+                    {
                         Logger.LogInformation("Se obtiene respuesta de normalizador :" + vuelos);
                         Logger.LogInformation($"Contiene {vuelos.providersResponse.Count} proveedores la respuesta");
                         if (vuelos.providersResponse.Count > 0)
@@ -249,6 +250,62 @@ namespace VuelosCore.Controllers
                                 {
                                     Logger.LogInformation($"proveedor invalido");
                                 }
+                            }
+                            return Ok(responseVuelos);
+                        }
+                        else
+                        {
+                            return NotFound("No existen proveedores disponibles para esta solicitud");
+                        }
+                    }
+                    else
+                    {
+                        return NotFound("No se encontro informacion con este Uuid");
+                    }
+
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Excepcion generada en ConsutlarVuelosUuid: " + ex.Message);
+                return StatusCode(500, "Ocurrio un error");
+                throw;
+            }
+        }
+
+        [HttpGet]
+        [Route("ConsultarReservaUiid")]
+        [EnableCors("AllowAll")]
+        public IActionResult ConsultarReservaUiid(string uuid)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(uuid))
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    ServidorCache servidorCache = new ServidorCache(_loggercache);
+                    var vuelos = servidorCache.getCacheReserva(uuid + "_FLIGHTS" + "_RESERVE");
+
+                    if (vuelos != null)
+                    {
+                        Logger.LogInformation("Se obtiene respuesta de normalizador :" + vuelos);
+                        Logger.LogInformation($"Contiene {vuelos.providersResponse.Count} proveedores la respuesta");
+                        if (vuelos.providersResponse.Count > 0)
+                        {
+                            List<ResponseBaseVuelosReserva> responseVuelos = new List<ResponseBaseVuelosReserva>();
+                            foreach (var item in vuelos.providersResponse)
+                            {
+                                Logger.LogInformation($"proveedor {item}");
+                                responseVuelos.Add(new ResponseBaseVuelosReserva
+                                {
+                                    Status = item.status
+                                });
+                                Logger.LogInformation($"proveedor agregado correctamente");
                             }
                             return Ok(responseVuelos);
                         }

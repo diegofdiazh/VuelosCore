@@ -26,6 +26,19 @@ namespace VuelosCore.Models.Responses
         public string FligthCode { get; set; }
       
     }
+    public class ResponseReservaVuelos
+    {
+        public List<ResponseBaseVuelosReserva> vuelos { get; set; }
+        public ResponseReservaVuelos()
+        {
+            vuelos = new List<ResponseBaseVuelosReserva>();
+        }
+    }
+    public partial class ResponseBaseVuelosReserva
+    {
+        public bool Status { get; set; }        
+
+    }
 }
 
 

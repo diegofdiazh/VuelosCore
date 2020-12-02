@@ -53,6 +53,37 @@ namespace VuelosCore.Services
             }
            
         }
+        public Root1 getCacheReserva(string llave)
+        {
+            try
+            {
+                _logger.LogInformation($"SOLICITUD OBTENCIO CACHE CON LA SIGUIENTE {llave}");
+                var client = new RestClient("http://host.docker.internal:32793/get/" + llave);
+                Root1 responseVuelos = null;
+                client.Timeout = -1;
+                var request = new RestRequest(Method.GET);
+                IRestResponse response = client.Execute(request);
+                if (response.IsSuccessful)
+                {
+                    string test = response.Content;
+                    string test2 = test.Substring(1, test.Length - 1)
+                        .Replace("\\n", "").Replace("\\", "");
+                    string test3 = test2.Remove(test2.Length - 1);
+                    string test4 = test3.Remove(test3.Length - 1);
+                    string test5 = test4.Remove(0, 1);
+                    _logger.LogInformation($"VALOR OBTENIDO {test5}");
+                    responseVuelos = JsonConvert.DeserializeObject<Root1>(test5);
+                }
+                _logger.LogInformation($"NO SE OBTUVO NADA");
+                return responseVuelos;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("SE REVENTO LA JODA MI PAPA EN GET RESERVA:" + ex.Message);
+                throw;
+            }
+
+        }
         public bool setCache(string msgnormalizado, string llave)
         {
             try
