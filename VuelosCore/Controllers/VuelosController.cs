@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
@@ -139,7 +140,7 @@ namespace VuelosCore.Controllers
         [HttpPost]
         [Route("ReservarVuelo")]
         [EnableCors("AllowAll")]
-        public async Task<IActionResult> ReservarVueloAsync([FromBody] ReservaDTO model, [FromHeader] string Token)
+        public async Task<IActionResult> ReservarVueloAsync([FromBody] ReservaDTO model)
         {
             try
             {
@@ -278,13 +279,36 @@ namespace VuelosCore.Controllers
         [HttpGet]
         [Route("ConsultarReservaUiid")]
         [EnableCors("AllowAll")]
-        public IActionResult ConsultarReservaUiid(string uuid)
+        public IActionResult ConsultarReservaUiid(string uuid, string nombre, string apellido, string codigoVuelo)
         {
             try
             {
-                if (string.IsNullOrEmpty(uuid))
+                Logger.LogInformation("INICIA PROCESO DE RESERVA DE VUELO");
+                JwtProvider jwt = new JwtProvider("TouresBalon.com", "UsuariosPlataforma");
+                var accessToken = Request.Headers[HeaderNames.Authorization];
+                var first = accessToken.FirstOrDefault();
+                if (string.IsNullOrEmpty(accessToken) || !first.Contains("Bearer"))
                 {
                     return BadRequest();
+                }
+                string token = first.Replace("Bearer", "").Trim();
+                Logger.LogInformation("INICIA PROCESO DE VALIDACION DE TOKEN :" + token);
+                var a = jwt.ValidateToken(token);
+                if (!a)
+                {
+                    return Unauthorized();
+                }
+                if (string.IsNullOrEmpty(uuid))
+                {
+                    return BadRequest("Ingrese uuid");
+                }
+                if (string.IsNullOrEmpty(nombre))
+                {
+                    return BadRequest("Ingrese nombre");
+                }
+                if (string.IsNullOrEmpty(apellido))
+                {
+                    return BadRequest("Ingrese apellido");
                 }
                 else
                 {
@@ -297,16 +321,30 @@ namespace VuelosCore.Controllers
                         Logger.LogInformation($"Contiene {vuelos.providersResponse.Count} proveedores la respuesta");
                         if (vuelos.providersResponse.Count > 0)
                         {
+                            Random r = new Random();
+                            var x = r.Next(0, 1000000);
+                            string s = x.ToString("000000");
                             List<ResponseBaseVuelosReserva> responseVuelos = new List<ResponseBaseVuelosReserva>();
                             foreach (var item in vuelos.providersResponse)
                             {
+                               
                                 Logger.LogInformation($"proveedor {item}");
                                 responseVuelos.Add(new ResponseBaseVuelosReserva
                                 {
-                                    Status = item.status
+                                    Estado = item.status,
+                                    CodigoReservaVuelo=s
                                 });
                                 Logger.LogInformation($"proveedor agregado correctamente");
-                            }
+                            }                           
+                            _db.ReservaVuelos.Add(new ReservaVuelo
+                            {
+                                Apellido = apellido,
+                                CodigoReserva = s,
+                                CodigoVuelo = codigoVuelo,
+                                Nombre = nombre,
+                                Token = token
+                            });
+                            _db.SaveChanges();
                             return Ok(responseVuelos);
                         }
                         else
@@ -334,9 +372,6 @@ namespace VuelosCore.Controllers
         [Route("Healty")]
         public IActionResult Healty()
         {
-            JwtProvider jwt = new JwtProvider("TouresBalon.com", "UsuariosPlataforma");
-
-            var a = jwt.ValidateToken("eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Ikdlcm1hbiBTaWx2YSIsInJvbGUiOiJhZG1pbiIsInByaW1hcnlzaWQiOiIxIiwiU3JjSW1nIjoiLi4vLi4vLi4vYXNzZXRzL2ltYWdlcy9Ub3VyZXNCYWxvbi9nZXJtYW4tcHJvZmlsZS5wbmciLCJuYmYiOjE2MDYwODkwODksImV4cCI6MTYwNjExNzg4OCwiaWF0IjoxNjA2MDg5MDg5LCJpc3MiOiJUb3VyZXNCYWxvbi5jb20iLCJhdWQiOiJVc3Vhcmlvc1BsYXRhZm9ybWEifQ.MkVkMot8CFnsNgvZVYbkAYJe2vXRsfdUjGjtgCs08o9oK6O9oGOeAnFooQaZYHg6T0E3p6noh2UzBmKuzv2ds4Zptm8aj5WqxP-KRmfAWgusbjdjTT4K90bRU5HpPwVzFrNUyUbJhFwb7Bjx374PB0d0AGJlA1CdAsUFQZvpP3JxvGdTLUOxFQPpa4lJRw5NZvJZJi_kO14vIc1C12V6UtKaj_SMN1FlSwp38QhylfwIokm4I8Thx7bNk2fxdZn3CMcmhzZOm5Vw92O5qUIo3ps9sMeh5l0UeuHsr11O2x05G3vDuQaU-LA09XRU_3OE2YySYtW9oU_POKAiALpoBw");
             return Ok("Todo Bien");
         }
     }

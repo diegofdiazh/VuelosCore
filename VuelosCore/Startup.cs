@@ -44,9 +44,10 @@ namespace VuelosCore
             services.AddControllers();
             var producerConfig = new ProducerConfig(); 
             var consumerConfig = new ConsumerConfig();
+            consumerConfig.EnableAutoCommit = false;
+            consumerConfig.EnableAutoOffsetStore = false;
             Configuration.Bind("Producer", producerConfig);
-            Configuration.Bind("Consumer", consumerConfig);
-            
+            Configuration.Bind("Consumer", consumerConfig);            
             services.AddSingleton<ProducerConfig>(producerConfig);
             services.AddSingleton<ConsumerConfig>(consumerConfig);
             services.AddHostedService<ConsumerService>();

@@ -36,7 +36,8 @@ namespace VuelosCore.Models.Responses
     }
     public partial class ResponseBaseVuelosReserva
     {
-        public bool Status { get; set; }        
+        public bool Estado { get; set; }
+        public string CodigoReservaVuelo { get; set; }
 
     }
 }

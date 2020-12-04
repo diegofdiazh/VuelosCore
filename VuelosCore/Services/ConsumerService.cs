@@ -57,16 +57,30 @@ namespace VuelosCore.Services
                                 var vuelos = JsonConvert.DeserializeObject<Root>(cr.Message.Value);
                                 ServidorCache servidorCache = new ServidorCache(_loggercache);
                                 servidorCache.setCache(cr.Message.Value, vuelos.uuid + "_" + vuelos.providerType + "_" + vuelos.processType);
+                                //this._kafkaConsumer.Commit(cr);
+                                this._kafkaConsumer.StoreOffset(cr);
+                                _logger.LogInformation("Mensaje comitiado");
                             }
                             else if (jitemType.Value.ToString() == "RESERVE")
                             {
                                 var vuelos = JsonConvert.DeserializeObject<Root1>(cr.Message.Value);
                                 ServidorCache servidorCache = new ServidorCache(_loggercache);
                                 servidorCache.setCache(cr.Message.Value, vuelos.uuid + "_" + vuelos.providerType + "_" + vuelos.processType);
+                                this._kafkaConsumer.StoreOffset(cr);
+                                //this._kafkaConsumer.Commit(cr);
+                                _logger.LogInformation("Mensaje comitiado");
                             }
 
                         }
                     }
+                    else
+                    {
+                        _logger.LogInformation("Mensaje no corresponde a vuelos");
+                      
+                    }
+                  
+
+
                 }
                 catch (OperationCanceledException)
                 {
